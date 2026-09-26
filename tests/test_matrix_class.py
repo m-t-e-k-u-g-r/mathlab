@@ -1,10 +1,7 @@
-import logging
 import unittest
 import numpy as np
 
 from domain.matrix import Matrix, SquareMatrix
-
-logger = logging.getLogger("tests")
 
 class MatrixClassTest(unittest.TestCase):
     m2x2zero = np.array([[0, 0], [0, 0]])
