@@ -1,8 +1,18 @@
 import logging
+import numpy as np
 
 from domain.matrix import Matrix, SquareMatrix
 
 logger = logging.getLogger(__name__)
+
+def extend_matrix(m1: Matrix, m2: Matrix) -> Matrix:
+    if m1.rows != m2.rows:
+        logger.error("Matrix dimensions do not match")
+        raise Exception("Matrix dimensions do not match")
+
+    return Matrix(np.array(
+        np.concatenate((m1.data, m2.data), axis=1)
+    ))
 
 def add_matrices(m1: Matrix, m2: Matrix, subtract: bool = False) -> Matrix:
     if m1.rows != m2.rows | m1.cols != m2.cols:

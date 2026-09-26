@@ -2,7 +2,8 @@ import unittest
 import numpy as np
 
 from domain.matrix import Matrix, SquareMatrix
-from matrix_operations import multiply_matrices, add_matrices, subtract_matrices, invert_matrix
+from matrix_operations import multiply_matrices, add_matrices, subtract_matrices, invert_matrix, extend_matrix
+
 
 class MatrixOperationsTests(unittest.TestCase):
     m2x3 = Matrix(np.array([
@@ -19,6 +20,17 @@ class MatrixOperationsTests(unittest.TestCase):
         [2, 4, 1],
         [2, 1, 0]
     ]))
+
+    def test_extend_matrix(self):
+        result = extend_matrix(self.m3x2, self.m3x3).data
+
+        expected = np.array([
+            [1, 2, 1, 2, 0],
+            [3, 4, 2, 4, 1],
+            [5, 6, 2, 1, 0]
+        ])
+        equal = np.array_equal(expected, result)
+        self.assertTrue(equal)
 
     def test_add_matrices(self):
         m1 = self.m2x3
