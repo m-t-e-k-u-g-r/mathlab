@@ -16,3 +16,13 @@ class Matrix:
 
     def set_value(self, row: int, col: int, value: float):
         self.data[row, col] = value
+
+class SquareMatrix(Matrix):
+    def __init__(self, data: np.ndarray | None = None, unit: bool = False, size: int = 2):
+        super().__init__(data)
+
+        if unit:
+            self.data = np.eye(size)
+
+        if self.rows != self.cols:
+            raise ValueError("Square matrix must have equal number of rows and columns")
