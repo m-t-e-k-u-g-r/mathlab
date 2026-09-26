@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# create a virtual environment in .venv
+python3 -m venv .venv
+
+# activate the virtual environment
+source .venv/bin/activate
+
+# install the necessary dependencies
+./.venv/bin/pip install -r requirements.txt
