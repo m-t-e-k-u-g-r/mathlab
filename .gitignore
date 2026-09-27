@@ -1,3 +1,13 @@
-.venv
 .idea
-logs
+.vscode
+
+logs/
+
+# generic excluded folder
+excluded/
+
+# python-specific
+.venv/
+__pycache__/
+.pytest_cache/
+
