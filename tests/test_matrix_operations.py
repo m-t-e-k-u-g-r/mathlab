@@ -77,7 +77,7 @@ class TestMatrixOperations:
         assert np.array_equal(expected, result)
 
     @pytest.mark.parametrize("size", list(range(2, 16)))
-    def test_laptest_get_determinant_recursivelace_expansion(self, size):
+    def test_laplace_expansion(self, size):
         for _ in range(100):
             m = SquareMatrix(self.rng.integers(-10, 11, size=(size, size)))
 
