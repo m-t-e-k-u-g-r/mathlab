@@ -14,7 +14,7 @@ def extend_matrix(m1: Matrix, m2: Matrix) -> Matrix:
         np.concatenate((m1.data, m2.data), axis=1)
     ))
 
-def add_matrices(m1: Matrix, m2: Matrix, subtract: bool = False) -> Matrix:
+def add_matrices(m1: Matrix, m2: Matrix, recursive: bool, subtract: bool = False) -> Matrix:
     if m1.rows != m2.rows | m1.cols != m2.cols:
         logger.error("Matrix dimensions do not match")
         raise Exception(f"Matrix dimensions do not match: {m1.rows}x{m1.cols} and {m2.rows}x{m2.cols}")
@@ -22,20 +22,37 @@ def add_matrices(m1: Matrix, m2: Matrix, subtract: bool = False) -> Matrix:
     logger.debug(f"Add matrices: {m1.rows}x{m1.cols} + {m2.rows}x{m2.cols}")
     result = Matrix(rows=m1.rows, cols=m1.cols)
 
-    operation = 's' if subtract else 'a'
-    return calc_recursive(m1, m2, result, operation)
+    # recursive approach
+    if recursive:
+        operation = 's' if subtract else 'a'
+        return calc_recursive(m1, m2, result, operation)
 
-def subtract_matrices(m1: Matrix, m2: Matrix) -> Matrix:
-    return add_matrices(m1, m2, subtract=True)
+    # iterative approach
+    for r in range(m1.rows):
+        if subtract:
+            result.set_row(r, m1.get_row(r) - m2.get_row(r))
+        else:
+            result.set_row(r, m1.get_row(r) + m2.get_row(r))
+    return result
 
-def multiply_matrices(m1: Matrix, m2: Matrix) -> Matrix:
+def subtract_matrices(m1: Matrix, m2: Matrix, recursive: bool) -> Matrix:
+    return add_matrices(m1, m2, recursive, subtract=True)
+
+def multiply_matrices(m1: Matrix, m2: Matrix, recursive: bool) -> Matrix:
     if m1.cols != m2.rows:
         logger.error("Matrix dimensions do not match")
         raise Exception(f"Matrix dimensions do not match: {m1.rows}x{m1.cols} and {m2.rows}x{m2.cols}")
 
     logger.debug(f"Multiply matrices: {m1.rows}x{m1.cols} * {m2.rows}x{m2.cols}")
     result = Matrix(rows=m1.rows, cols=m2.cols)
-    return calc_recursive(m1, m2, result, 'm')
+    # recursive approach
+    if recursive:
+        return calc_recursive(m1, m2, result, 'm')
+
+    # iterative approach
+    for r in range(m1.rows):
+        result.set_row(r, m1.get_row(r) + m2.get_col(r))
+    return result
 
 def calc_recursive(m1: Matrix, m2: Matrix, result: Matrix, operation: str, row: int = 0, col: int = 0) -> Matrix:
     if col >= m2.cols:
