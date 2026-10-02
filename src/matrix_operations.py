@@ -51,7 +51,12 @@ def multiply_matrices(m1: Matrix, m2: Matrix, recursive: bool) -> Matrix:
 
     # iterative approach
     for r in range(m1.rows):
-        result.set_row(r, m1.get_row(r) + m2.get_col(r))
+        new_row = []
+        for c in range(m2.cols):
+            new_row.append(sum(
+                m1.get_row(r) * m2.get_col(c)
+            ))
+        result.set_row(r, np.array(new_row))
     return result
 
 def calc_recursive(m1: Matrix, m2: Matrix, result: Matrix, operation: str, row: int = 0, col: int = 0) -> Matrix:
