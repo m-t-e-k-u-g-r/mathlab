@@ -1,14 +1,12 @@
 import numpy as np
+import pytest
 
 from domain.matrix import Matrix, SquareMatrix
 import matrix_operations as mo
 
 
 class TestMatrixOperations:
-    m2x3 = Matrix(np.array([
-        [1, 2, 3],
-        [4, 5, 6]
-    ]))
+    rng = np.random.default_rng(42)
     m3x2 = Matrix(np.array([
         [1, 2],
         [3, 4],
@@ -19,6 +17,10 @@ class TestMatrixOperations:
         [2, 4, 1],
         [2, 1, 0]
     ]))
+    test_sizes = pytest.mark.parametrize("recursive,size",
+        [(True, size) for size in range(2, 31)]
+        + [(False, size) for size in range(2, 101)]
+    )
 
     def test_extend_matrix(self):
         result = mo.extend_matrix(self.m3x2, self.m3x3).data
@@ -30,46 +32,41 @@ class TestMatrixOperations:
         ])
         assert np.array_equal(expected, result)
 
-    def test_add_matrices(self):
-        m1 = self.m2x3
+    @test_sizes
+    def test_add_matrices(self, recursive, size):
+        for _ in range(100):
+            m1 = Matrix(self.rng.integers(-10, 11, size=(size, size)))
+            m2 = Matrix(self.rng.integers(-10, 11, size=(size, size)))
 
-        result = mo.add_matrices(m1, m1).data
+            result = mo.add_matrices(m1, m2, recursive).data
 
-        expected = Matrix(np.array([
-            [2, 4, 6],
-            [8, 10, 12]
-        ])).data
+            expected = np.add(m1.data, m2.data)
+            assert np.array_equal(expected, result)
 
-        assert np.array_equal(expected, result)
+    @test_sizes
+    def test_subtract_matrices(self, recursive, size):
+        for _ in range(100):
+            m1 = Matrix(self.rng.integers(-10, 11, size=(size, size)))
+            m2 = Matrix(self.rng.integers(-10, 11, size=(size, size)))
 
-    def test_subtract_matrices(self):
-        m1 = self.m3x2
+            result = mo.subtract_matrices(m1, m2, recursive).data
 
-        result = mo.subtract_matrices(m1, m1).data
+            expected = np.subtract(m1.data, m2.data)
+            assert np.array_equal(expected, result)
 
-        expected = Matrix(np.array([
-            [0, 0],
-            [0, 0],
-            [0, 0]
-        ])).data
+    @test_sizes
+    def test_multiply_matrices(self, recursive, size):
+        for _ in range(100):
+            m1 = Matrix(self.rng.integers(-10, 11, size=(size, size)))
+            m2 = Matrix(self.rng.integers(-10, 11, size=(size, size)))
 
-        assert np.array_equal(expected, result)
+            result = mo.multiply_matrices(m1, m2, recursive).data
 
-    def test_multiply_matrices(self):
-        m1 = self.m2x3
-        m2 = self.m3x2
-
-        result = mo.multiply_matrices(m1, m2).data
-
-        expected = Matrix(np.array([
-            [22, 28],
-            [49, 64]
-        ])).data
-
-        assert np.array_equal(expected, result)
+            expected = np.matmul(m1.data, m2.data)
+            assert np.array_equal(expected, result)
 
     def test_invert_matrix(self):
-        result = mo.invert_matrix(self.m3x3, None).data
+        result = mo.invert_matrix(self.m3x3).data
 
         expected = SquareMatrix(np.array([
             [-1/3, 0, 2/3],

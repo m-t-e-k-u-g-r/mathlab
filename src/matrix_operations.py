@@ -76,7 +76,7 @@ def calc_recursive(m1: Matrix, m2: Matrix, result: Matrix, operation: str, row: 
     result.set_value(row, col, value)
     return calc_recursive(m1, m2, result, operation, row, col + 1)
 
-def invert_matrix(m1: SquareMatrix, m2: SquareMatrix | None) -> SquareMatrix:
+def invert_matrix(m1: SquareMatrix, m2: SquareMatrix | None = None) -> SquareMatrix:
     if m2 is None:
         m2 = SquareMatrix(np.identity(m1.rows))
     if m1.rows != m2.rows:
