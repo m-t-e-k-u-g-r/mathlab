@@ -8,8 +8,47 @@ logger = logging.getLogger(__name__)
 type Interim = tuple[float, SquareMatrix]
 # calculate determinant of matrix
 def laplace_expansion(m: SquareMatrix, interims: list[Interim] | None = None) -> float:
-    # TODO: implement Laplace expansion
-    pass
+    if interims is not None:
+        v = 0
+        for interim in interims:
+            # calculate sum of interims
+            added = interim[0] * laplace_expansion(interim[1])
+            v += added
+        return v
+    else:
+        # return determinant of 2x2 matrix
+        if m.rows == 2:
+            return (m.get_value(0, 0) * m.get_value(1, 1) -
+                    m.get_value(0, 1) * m.get_value(1, 0))
+
+        # get first row
+        first: np.ndarray = m.get_row(0)
+        # multiply every second value with -1
+        first[1::2] *= -1
+
+        new_interims = []
+        # iterate through columns
+        for col, v in enumerate(first):
+            # skip columns multiplied with 0
+            if v == 0:
+                continue
+
+            # create interim square matrix
+            interim = SquareMatrix(size=len(first) - 1)
+            next_col = 0
+            # iterate through the columns to build interims
+            for c in range(len(first)):
+                # skip the
+                if c == col:
+                    continue
+
+                logger.debug(f"rows: {interim.rows + 1}")
+                for r in range(1, interim.rows + 1):
+                    interim.set_value(r - 1, next_col, m.get_value(r, c))
+                next_col += 1
+            # append new interim
+            new_interims.append((v, interim))
+        return laplace_expansion(m, new_interims)
 
 def extend_matrix(m1: Matrix, m2: Matrix) -> Matrix:
     if m1.rows != m2.rows:
