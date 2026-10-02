@@ -5,6 +5,12 @@ from domain.matrix import Matrix, SquareMatrix
 
 logger = logging.getLogger(__name__)
 
+type Interim = tuple[float, SquareMatrix]
+# calculate determinant of matrix
+def laplace_expansion(m: SquareMatrix, interims: list[Interim] | None = None) -> float:
+    # TODO: implement Laplace expansion
+    pass
+
 def extend_matrix(m1: Matrix, m2: Matrix) -> Matrix:
     if m1.rows != m2.rows:
         logger.error("Matrix dimensions do not match")
