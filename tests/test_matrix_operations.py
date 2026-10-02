@@ -1,11 +1,10 @@
-import unittest
 import numpy as np
 
 from domain.matrix import Matrix, SquareMatrix
-from matrix_operations import multiply_matrices, add_matrices, subtract_matrices, invert_matrix, extend_matrix
+import matrix_operations as mo
 
 
-class MatrixOperationsTests(unittest.TestCase):
+class TestMatrixOperations:
     m2x3 = Matrix(np.array([
         [1, 2, 3],
         [4, 5, 6]
@@ -22,64 +21,60 @@ class MatrixOperationsTests(unittest.TestCase):
     ]))
 
     def test_extend_matrix(self):
-        result = extend_matrix(self.m3x2, self.m3x3).data
+        result = mo.extend_matrix(self.m3x2, self.m3x3).data
 
         expected = np.array([
             [1, 2, 1, 2, 0],
             [3, 4, 2, 4, 1],
             [5, 6, 2, 1, 0]
         ])
-        equal = np.array_equal(expected, result)
-        self.assertTrue(equal)
+        assert np.array_equal(expected, result)
 
     def test_add_matrices(self):
         m1 = self.m2x3
 
-        result = add_matrices(m1, m1).data
+        result = mo.add_matrices(m1, m1).data
 
         expected = Matrix(np.array([
             [2, 4, 6],
             [8, 10, 12]
         ])).data
-        equal = np.array_equal(expected, result)
-        self.assertTrue(equal)
+
+        assert np.array_equal(expected, result)
 
     def test_subtract_matrices(self):
         m1 = self.m3x2
 
-        result = subtract_matrices(m1, m1).data
+        result = mo.subtract_matrices(m1, m1).data
 
         expected = Matrix(np.array([
             [0, 0],
             [0, 0],
             [0, 0]
         ])).data
-        equal = np.array_equal(expected, result)
-        self.assertTrue(equal)
+
+        assert np.array_equal(expected, result)
 
     def test_multiply_matrices(self):
         m1 = self.m2x3
         m2 = self.m3x2
 
-        result = multiply_matrices(m1, m2).data
+        result = mo.multiply_matrices(m1, m2).data
 
         expected = Matrix(np.array([
             [22, 28],
             [49, 64]
         ])).data
-        equal = np.array_equal(expected, result)
-        self.assertTrue(equal)
+
+        assert np.array_equal(expected, result)
 
     def test_invert_matrix(self):
-        result = invert_matrix(self.m3x3, None).data
+        result = mo.invert_matrix(self.m3x3, None).data
 
         expected = SquareMatrix(np.array([
             [-1/3, 0, 2/3],
             [2/3, 0, -1/3],
             [-2, 1, 0]
         ])).data
-        equal = np.array_equal(expected, result)
-        self.assertTrue(equal)
 
-if __name__ == '__main__':
-    unittest.main()
+        assert np.array_equal(expected, result)
