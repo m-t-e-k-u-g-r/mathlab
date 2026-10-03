@@ -21,33 +21,53 @@ def laplace_expansion(m: SquareMatrix, interims: list[Interim] | None = None) ->
             return (m.get_value(0, 0) * m.get_value(1, 1) -
                     m.get_value(0, 1) * m.get_value(1, 0))
 
-        # get first row
-        first: np.ndarray = m.get_row(0)
-        # multiply every second value with -1
-        first[1::2] *= -1
+        # count zeros in each row and column
+        row_counts = np.count_nonzero(m.data == 0, axis=1)
+        col_counts = np.count_nonzero(m.data == 0, axis=0)
+
+        # find highest counts of zero values in rows and columns
+        row_max = row_counts.max()
+        col_max = col_counts.max()
+
+        fixed_type = 'r' if row_max >= col_max else 'c'
+        fixed_index = row_counts.argmax() if fixed_type == 'r' else col_counts.argmax()
+        fixed = np.array(
+            m.get_row(fixed_index) if fixed_type == 'r'
+            else m.get_col(fixed_index),
+            copy=True)
 
         new_interims = []
-        # iterate through columns
-        for col, v in enumerate(first):
-            # skip columns multiplied with 0
+        # iterate through lines to build interim matrices
+        for index, v in enumerate(fixed):
+            # skip lines multiplied with 0
             if v == 0:
                 continue
+            # multiply coefficient with -1 if necessary
+            coefficient = v * (-1) ** (fixed_index + index)
 
             # create interim square matrix
-            interim = SquareMatrix(size=len(first) - 1)
-            next_col = 0
-            # iterate through the columns to build interims
-            for c in range(len(first)):
-                # skip the
-                if c == col:
+            interim = SquareMatrix(size=len(fixed) - 1)
+            next_line = 0
+            # iterate through the lines to build interims
+            for l in range(len(fixed)):
+                # skip the fixed line
+                if l == fixed_index:
                     continue
 
-                logger.debug(f"rows: {interim.rows + 1}")
-                for r in range(1, interim.rows + 1):
-                    interim.set_value(r - 1, next_col, m.get_value(r, c))
-                next_col += 1
+                next_cross = 0
+                # iterate through cross lines
+                for c in range(interim.rows + 1):
+                    if c == index:
+                        continue
+
+                    if fixed_type == 'r':
+                        interim.set_value(next_line, next_cross, m.get_value(l, c))
+                    else:
+                        interim.set_value(next_cross, next_line, m.get_value(c, l))
+                    next_cross += 1
+                next_line += 1
             # append new interim
-            new_interims.append((v, interim))
+            new_interims.append((coefficient, interim))
         return laplace_expansion(m, new_interims)
 
 def extend_matrix(m1: Matrix, m2: Matrix) -> Matrix:
