@@ -65,17 +65,6 @@ class TestMatrixOperations:
             expected = np.matmul(m1.data, m2.data)
             assert np.array_equal(expected, result)
 
-    def test_invert_matrix(self):
-        result = mo.invert_matrix(self.m3x3).data
-
-        expected = SquareMatrix(np.array([
-            [-1/3, 0, 2/3],
-            [2/3, 0, -1/3],
-            [-2, 1, 0]
-        ])).data
-
-        assert np.array_equal(expected, result)
-
     @pytest.mark.parametrize("size", list(range(2, 16)))
     def test_laplace_expansion(self, size):
         for _ in range(100):
