@@ -17,6 +17,9 @@ class Matrix:
             if self.data.ndim != 2:
                 raise ValueError("Matrix data must be two-dimensional")
 
+    def copy(self) -> Matrix:
+        return Matrix(self.data.copy())
+
     def get_value(self, row: int, col: int) -> float:
         return self.data[row, col]
 
@@ -41,13 +44,14 @@ class Matrix:
         for i in range(self.rows):
             self.data[i, col] = values[i]
 
-    def extend(self, m: Matrix):
-        if self.rows != m.rows:
-            raise Exception("Matrix dimensions do not match")
+    def extend(self, m: Matrix, overwrite: bool = False) -> Matrix:
+        extended = np.concatenate((self.data, m.data), axis=1)
 
-        self.data = np.array(
-            np.concatenate((self.data, m.data), axis=1)
-        )
+        if overwrite:
+            self.data = extended
+            return self
+
+        return Matrix(extended)
 
 class SquareMatrix(Matrix):
     def __init__(self, data: np.ndarray | None = None, unit: bool = False, size: int = 2):
@@ -58,3 +62,8 @@ class SquareMatrix(Matrix):
 
         if self.rows != self.cols:
             raise ValueError("Square matrix must have equal number of rows and columns")
+
+    def extend(self, m, overwrite = False) -> Matrix:
+        if overwrite:
+            raise TypeError("A SquareMatrix cannot be extended in-place.")
+        return super().extend(m)
