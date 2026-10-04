@@ -1,6 +1,14 @@
 import numpy as np
 
 class Matrix:
+    @property
+    def rows(self):
+        return self.data.shape[0]
+
+    @property
+    def cols(self):
+        return self.data.shape[1]
+
     def __init__(self, data: np.ndarray | None = None, rows: int = 2, cols: int = 2):
         if data is None:
             self.data = np.zeros((rows, cols))
@@ -8,8 +16,6 @@ class Matrix:
             self.data = np.asarray(data)
             if self.data.ndim != 2:
                 raise ValueError("Matrix data must be two-dimensional")
-
-        self.rows, self.cols = self.data.shape
 
     def get_value(self, row: int, col: int) -> float:
         return self.data[row, col]
