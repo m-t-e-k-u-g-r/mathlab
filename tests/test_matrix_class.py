@@ -52,7 +52,7 @@ class TestMatrixClass:
         assert 3 == result
 
     def test_set_value(self):
-        m = Matrix(self.simple_2x2)
+        m = Matrix(self.simple_2x2.copy())
 
         m.set_value(1, 0, 5)
 
@@ -66,7 +66,7 @@ class TestMatrixClass:
         assert np.array_equal(self.simple_2x2[0], result)
 
     def test_set_row(self):
-        m = Matrix(self.simple_2x2)
+        m = Matrix(self.simple_2x2.copy())
         new_row = np.array([4, 5])
 
         m.set_row(0, new_row)
@@ -81,7 +81,7 @@ class TestMatrixClass:
         assert np.array_equal(np.array([1, 3]), result)
 
     def test_set_col(self):
-        m = Matrix(self.simple_2x2)
+        m = Matrix(self.simple_2x2.copy())
         new_col = np.array([10, 11])
 
         m.set_col(0, new_col)
