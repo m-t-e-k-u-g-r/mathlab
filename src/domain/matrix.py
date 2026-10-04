@@ -41,6 +41,14 @@ class Matrix:
         for i in range(self.rows):
             self.data[i, col] = values[i]
 
+    def extend(self, m: Matrix):
+        if self.rows != m.rows:
+            raise Exception("Matrix dimensions do not match")
+
+        self.data = np.array(
+            np.concatenate((self.data, m.data), axis=1)
+        )
+
 class SquareMatrix(Matrix):
     def __init__(self, data: np.ndarray | None = None, unit: bool = False, size: int = 2):
         super().__init__(data, rows=size, cols=size)

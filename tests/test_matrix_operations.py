@@ -7,30 +7,11 @@ import matrix_operations as mo
 
 class TestMatrixOperations:
     rng = np.random.default_rng(42)
-    m3x2 = Matrix(np.array([
-        [1, 2],
-        [3, 4],
-        [5, 6]
-    ]))
-    m3x3 = SquareMatrix(np.array([
-        [1, 2, 0],
-        [2, 4, 1],
-        [2, 1, 0]
-    ]))
     test_sizes = pytest.mark.parametrize("recursive,size",
         [(True, size) for size in range(2, 31)]
         + [(False, size) for size in range(2, 101)]
     )
 
-    def test_extend_matrix(self):
-        result = mo.extend_matrix(self.m3x2, self.m3x3).data
-
-        expected = np.array([
-            [1, 2, 1, 2, 0],
-            [3, 4, 2, 4, 1],
-            [5, 6, 2, 1, 0]
-        ])
-        assert np.array_equal(expected, result)
 
     @test_sizes
     def test_add_matrices(self, recursive, size):

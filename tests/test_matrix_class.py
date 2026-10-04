@@ -87,3 +87,16 @@ class TestMatrixClass:
         m.set_col(0, new_col)
 
         assert np.array_equal(m.get_col(0), new_col)
+
+    def test_extend_matrix(self):
+        m1 = Matrix(np.array([[1, 2], [3, 4], [5, 6]]))
+        m2 = Matrix(np.array([[1, 2, 0], [2, 4, 1], [2, 1, 0]]))
+
+        m1.extend(m2)
+
+        expected = np.array([
+            [1, 2, 1, 2, 0],
+            [3, 4, 2, 4, 1],
+            [5, 6, 2, 1, 0]
+        ])
+        assert np.array_equal(expected, m1.data)
