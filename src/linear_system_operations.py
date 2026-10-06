@@ -32,7 +32,7 @@ def gauss_algorithm_iterative(equations: Matrix) -> LinearSystemEquationSolution
 
         # no solution
         if pivot_value == 0:
-            return LinearSystemEquationSolution(SolutionType.NO_SOLUTION, None)
+            continue
 
         # divide pivot row by pivot value
         new_row = equations.get_row(row) / pivot_value
@@ -55,6 +55,14 @@ def backward_substitution(augmented: Matrix, row: int | None = None, col: int | 
     row = row if row is not None else augmented.rows - 1
     col = col if col is not None else augmented.rows
     solution = solution if solution is not None else np.zeros((augmented.rows, 1))
+
+    row_values = augmented.get_row(row, copy=True).tolist()
+    rhs = row_values.pop()
+    if all(v == 0 for v in row_values) and rhs != 0:
+        return LinearSystemEquationSolution(SolutionType.NO_SOLUTION, None)
+
+    if all(v == 0 for v in augmented.get_row(row)):
+        return LinearSystemEquationSolution(SolutionType.INFINITE_SOLUTIONS, None)
 
     # return if the top row has been processed
     if row < 0:
