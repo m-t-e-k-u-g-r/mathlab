@@ -44,6 +44,22 @@ class TestMatrixClass:
         assert size == m.cols
         assert np.array_equal(self.unit, m.data)
 
+    def test_switch_rows(self):
+        m = Matrix(self.simple_2x2.copy())
+
+        m.switch_rows(0, 1)
+
+        expected = np.array([[3, 4], [1, 2]])
+        assert np.array_equal(expected, m.data)
+
+    def test_switch_cols(self):
+        m = Matrix(self.simple_2x2.copy())
+
+        m.switch_cols(0, 1)
+
+        expected = np.array([[2, 1], [4, 3]])
+        assert np.array_equal(expected, m.data)
+
     def test_get_value(self):
         m = Matrix(self.simple_2x2)
 
@@ -92,11 +108,11 @@ class TestMatrixClass:
         m1 = Matrix(np.array([[1, 2], [3, 4], [5, 6]]))
         m2 = Matrix(np.array([[1, 2, 0], [2, 4, 1], [2, 1, 0]]))
 
-        m1.extend(m2)
+        result = m1.extend(m2)
 
         expected = np.array([
             [1, 2, 1, 2, 0],
             [3, 4, 2, 4, 1],
             [5, 6, 2, 1, 0]
         ])
-        assert np.array_equal(expected, m1.data)
+        assert np.array_equal(expected, result.data)

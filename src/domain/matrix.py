@@ -11,9 +11,9 @@ class Matrix:
 
     def __init__(self, data: np.ndarray | None = None, rows: int = 2, cols: int = 2):
         if data is None:
-            self.data = np.zeros((rows, cols))
+            self.data = np.zeros((rows, cols), dtype=float)
         else:
-            self.data = np.asarray(data)
+            self.data = np.asarray(data, dtype=float)
             if self.data.ndim != 2:
                 raise ValueError("Matrix data must be two-dimensional")
 
@@ -43,6 +43,24 @@ class Matrix:
             raise ValueError("Matrix must have equal number of columns and rows")
         for i in range(self.rows):
             self.data[i, col] = values[i]
+
+    def switch_rows(self, i1: int, i2: int):
+        if i1 == i2 or i1 >= self.rows or i2 >= self.rows or i1 < 0 or i2 < 0:
+            raise ValueError("Invalid rows selected")
+
+        r1_temp = self.get_row(i1).copy()
+
+        self.set_row(i1, self.get_row(i2))
+        self.set_row(i2, r1_temp)
+
+    def switch_cols(self, i1: int, i2: int):
+        if i1 == i2 or i1 >= self.cols or i2 >= self.cols or i1 < 0 or i2 < 0:
+            raise ValueError("Invalid columns selected")
+
+        c1_temp = self.get_col(i1).copy()
+
+        self.set_col(i1, self.get_col(i2))
+        self.set_col(i2, c1_temp)
 
     def extend(self, m: Matrix, overwrite: bool = False) -> Matrix:
         extended = np.concatenate((self.data, m.data), axis=1)
