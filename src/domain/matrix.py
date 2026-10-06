@@ -23,12 +23,11 @@ class Matrix:
     def get_value(self, row: int, col: int) -> float:
         return self.data[row, col]
 
-    def get_row(self, row: int) -> np.ndarray:
-        return self.data[row]
+    def get_row(self, row: int, copy: bool = False) -> np.ndarray:
+        return self.data[row].copy() if copy else self.data[row]
 
-    def get_col(self, col: int) -> np.ndarray:
-        column = [self.data[row, col] for row in range(self.rows)]
-        return np.array(column)
+    def get_col(self, col: int, copy: bool = False) -> np.ndarray:
+        return self.data[:, col].copy() if copy else self.data[:, col]
 
     def set_value(self, row: int, col: int, value: float):
         self.data[row, col] = value
@@ -80,6 +79,9 @@ class SquareMatrix(Matrix):
 
         if self.rows != self.cols:
             raise ValueError("Square matrix must have equal number of rows and columns")
+
+    def copy(self) -> SquareMatrix:
+        return SquareMatrix(self.data.copy())
 
     def extend(self, m, overwrite = False) -> Matrix:
         if overwrite:
