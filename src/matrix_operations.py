@@ -70,14 +70,6 @@ def laplace_expansion(m: SquareMatrix, interims: list[Interim] | None = None) ->
             new_interims.append((coefficient, interim))
         return laplace_expansion(m, new_interims)
 
-def extend_matrix(m1: Matrix, m2: Matrix) -> Matrix:
-    if m1.rows != m2.rows:
-        logger.error("Matrix dimensions do not match")
-        raise Exception("Matrix dimensions do not match")
-
-    return Matrix(np.array(
-        np.concatenate((m1.data, m2.data), axis=1)
-    ))
 
 def add_matrices(m1: Matrix, m2: Matrix, recursive: bool, subtract: bool = False) -> Matrix:
     if m1.rows != m2.rows | m1.cols != m2.cols:
