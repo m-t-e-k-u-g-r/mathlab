@@ -4,11 +4,13 @@ from domain.lse_solution import LinearSystemEquationSolution, SolutionType
 from domain.matrix import Matrix, SquareMatrix
 
 
-def solve_lse(coefficient_matrix: SquareMatrix, rhs: Matrix) -> LinearSystemEquationSolution:
+def solve_lse(coefficient_matrix: SquareMatrix, rhs: Matrix, recursive: bool = False) -> LinearSystemEquationSolution:
     if coefficient_matrix.rows != rhs.rows or rhs.cols != 1:
         raise ValueError("Invalid matrix")
 
     extended = coefficient_matrix.extend(rhs)
+    if recursive:
+        return gauss_algorithm_recursive(extended)
     return gauss_algorithm_iterative(extended)
 
 
@@ -48,6 +50,41 @@ def gauss_algorithm_iterative(equations: Matrix) -> LinearSystemEquationSolution
             equations.set_row(i, new_row)
 
     return backward_substitution(equations)
+
+
+def gauss_algorithm_recursive(equations: Matrix, row: int = 0, candidate: int = -1, next_index: int = -1) -> LinearSystemEquationSolution:
+    if row >= equations.rows:
+        return backward_substitution(equations)
+
+    candidate = candidate if candidate != -1 else row + 1
+    next_index = next_index if next_index != -1 else row + 1
+
+    if candidate >= equations.rows:
+        pivot_value = equations.get_value(row, row)
+
+        # no solution
+        if pivot_value == 0:
+            return LinearSystemEquationSolution(SolutionType.NO_SOLUTION, None)
+
+        # divide pivot row by pivot value
+        pivot_row = equations.get_row(row)
+        new_row = pivot_row / pivot_value
+        equations.set_row(row, new_row)
+
+        if next_index >= equations.rows:
+            return gauss_algorithm_recursive(equations, row + 1)
+
+        next_row = equations.get_row(next_index)
+        next_value = next_row[row]
+        new_row = next_row - next_value * pivot_row
+        equations.set_row(next_index, new_row)
+        return gauss_algorithm_recursive(equations, row, candidate, next_index + 1)
+    else:
+        candidate_value = equations.get_value(candidate, row)
+        current = equations.get_value(row, row)
+        if abs(candidate_value) > abs(current):
+            equations.switch_rows(row, candidate)
+        return gauss_algorithm_recursive(equations, row, candidate + 1)
 
 
 def backward_substitution(augmented: Matrix, row: int | None = None, col: int | None = None, solution: np.ndarray | None = None) -> LinearSystemEquationSolution:
