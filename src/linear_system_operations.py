@@ -4,7 +4,17 @@ from domain.lse_solution import LinearSystemEquationSolution, SolutionType
 from domain.matrix import Matrix, SquareMatrix
 
 
-def solve_lse(coefficient_matrix: SquareMatrix, rhs: Matrix, recursive: bool = False) -> LinearSystemEquationSolution:
+def solve(a: SquareMatrix, b: Matrix):
+    if a.rows != b.rows:
+        raise ValueError("Number of rows does not match")
+    if b.cols != 1:
+        raise ValueError("Multiple possible solutions supplied")
+
+    from matrix_operations import gauss_jordan_algorithm
+    return gauss_jordan_algorithm(a, b)
+
+
+def gauss_algorithm(coefficient_matrix: SquareMatrix, rhs: Matrix, recursive: bool = False) -> LinearSystemEquationSolution:
     if coefficient_matrix.rows != rhs.rows or rhs.cols != 1:
         raise ValueError("Invalid matrix")
 

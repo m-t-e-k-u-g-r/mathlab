@@ -4,7 +4,7 @@ from numpy.linalg import LinAlgError
 
 from domain.lse_solution import LinearSystemEquationSolution, SolutionType
 from domain.matrix import Matrix, SquareMatrix
-from linear_system_operations import backward_substitution, solve_lse
+from linear_system_operations import backward_substitution, gauss_algorithm
 
 
 class TestLinearSystemOperations:
@@ -25,7 +25,7 @@ class TestLinearSystemOperations:
             coefficients = SquareMatrix(self.rng.uniform(-10, 11, size=(size, size)))
             right_hand_side = Matrix(self.rng.uniform(-10, 11, size=(size, 1)))
 
-            result = solve_lse(coefficients.copy(), right_hand_side.copy(), recursive)
+            result = gauss_algorithm(coefficients.copy(), right_hand_side.copy(), recursive)
 
             try:
                 expected = np.linalg.solve(coefficients.data, right_hand_side.data)
