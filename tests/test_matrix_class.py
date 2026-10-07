@@ -5,7 +5,6 @@ from domain.matrix import Matrix, SquareMatrix
 class TestMatrixClass:
     m2x2zero = np.array([[0, 0], [0, 0]])
     m2x3zero = np.array([[0, 0, 0], [0, 0, 0]])
-    unit = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     simple_2x2 = np.array([[1, 2], [3, 4]])
 
     def test_no_args_constructor(self):
@@ -42,7 +41,23 @@ class TestMatrixClass:
 
         assert size == m.rows
         assert size == m.cols
-        assert np.array_equal(self.unit, m.data)
+        assert np.array_equal(np.eye(size), m.data)
+
+    def test_switch_rows(self):
+        m = Matrix(self.simple_2x2.copy())
+
+        m.switch_rows(0, 1)
+
+        expected = np.array([[3, 4], [1, 2]])
+        assert np.array_equal(expected, m.data)
+
+    def test_switch_cols(self):
+        m = Matrix(self.simple_2x2.copy())
+
+        m.switch_cols(0, 1)
+
+        expected = np.array([[2, 1], [4, 3]])
+        assert np.array_equal(expected, m.data)
 
     def test_get_value(self):
         m = Matrix(self.simple_2x2)
@@ -52,7 +67,7 @@ class TestMatrixClass:
         assert 3 == result
 
     def test_set_value(self):
-        m = Matrix(self.simple_2x2)
+        m = Matrix(self.simple_2x2.copy())
 
         m.set_value(1, 0, 5)
 
@@ -66,7 +81,7 @@ class TestMatrixClass:
         assert np.array_equal(self.simple_2x2[0], result)
 
     def test_set_row(self):
-        m = Matrix(self.simple_2x2)
+        m = Matrix(self.simple_2x2.copy())
         new_row = np.array([4, 5])
 
         m.set_row(0, new_row)
@@ -81,9 +96,22 @@ class TestMatrixClass:
         assert np.array_equal(np.array([1, 3]), result)
 
     def test_set_col(self):
-        m = Matrix(self.simple_2x2)
+        m = Matrix(self.simple_2x2.copy())
         new_col = np.array([10, 11])
 
         m.set_col(0, new_col)
 
         assert np.array_equal(m.get_col(0), new_col)
+
+    def test_extend_matrix(self):
+        m1 = Matrix(np.array([[1, 2], [3, 4], [5, 6]]))
+        m2 = Matrix(np.array([[1, 2, 0], [2, 4, 1], [2, 1, 0]]))
+
+        result = m1.extend(m2)
+
+        expected = np.array([
+            [1, 2, 1, 2, 0],
+            [3, 4, 2, 4, 1],
+            [5, 6, 2, 1, 0]
+        ])
+        assert np.array_equal(expected, result.data)
