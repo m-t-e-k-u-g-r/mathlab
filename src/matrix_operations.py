@@ -92,8 +92,10 @@ def add_matrices(m1: Matrix, m2: Matrix, recursive: bool, subtract: bool = False
             result.set_row(r, m1.get_row(r) + m2.get_row(r))
     return result
 
+
 def subtract_matrices(m1: Matrix, m2: Matrix, recursive: bool) -> Matrix:
     return add_matrices(m1, m2, recursive, subtract=True)
+
 
 def multiply_matrices(m1: Matrix, m2: Matrix, recursive: bool) -> Matrix:
     if m1.cols != m2.rows:
@@ -116,6 +118,7 @@ def multiply_matrices(m1: Matrix, m2: Matrix, recursive: bool) -> Matrix:
         result.set_row(r, np.array(new_row))
     return result
 
+
 def calc_recursive(m1: Matrix, m2: Matrix, result: Matrix, operation: str, row: int = 0, col: int = 0) -> Matrix:
     if col >= m2.cols:
         return calc_recursive(m1, m2, result, operation, row + 1, 0)
@@ -137,3 +140,43 @@ def calc_recursive(m1: Matrix, m2: Matrix, result: Matrix, operation: str, row: 
 
     result.set_value(row, col, value)
     return calc_recursive(m1, m2, result, operation, row, col + 1)
+
+
+def gauss_jordan_algorithm(a: SquareMatrix, b: Matrix) -> Matrix:
+    if a.rows != b.rows:
+        raise ValueError("Matrix dimensions do not match")
+
+    augmented = a.extend(b)
+
+    for col in range(a.cols):
+        pivot_row = col
+        pivot_value = abs(augmented.get_value(col, col))
+
+        if pivot_value == 0:
+            for i in range(col + 1, augmented.rows):
+                candidate_value = abs(augmented.get_value(i, col))
+                if candidate_value > pivot_value:
+                    pivot_row = i
+                    pivot_value = candidate_value
+
+            if pivot_row != col:
+                augmented.switch_rows(col, pivot_row)
+
+        if abs(pivot_value) == 0:
+            raise ValueError("Matrix cannot be inverted")
+
+        pivot = augmented.get_value(col, col)
+        augmented.set_row(col, augmented.get_row(col) / pivot)
+
+        for i in range(col + 1, a.cols):
+            factor = augmented.get_value(i, col)
+            new_row = augmented.get_row(i) - factor * augmented.get_row(col)
+            augmented.set_row(i, new_row)
+
+    for row in range(a.rows - 1, -1, -1):
+        for i in range(row - 1, -1, -1):
+            factor = augmented.get_value(i, row)
+            new_row = augmented.get_row(i) - factor * augmented.get_row(row)
+            augmented.set_row(i, new_row)
+
+    return Matrix(augmented.data[:,a.cols:])
