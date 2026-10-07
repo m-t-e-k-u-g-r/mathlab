@@ -13,7 +13,7 @@ class Matrix:
         if data is None:
             self.data = np.zeros((rows, cols), dtype=float)
         else:
-            self.data = np.asarray(data, dtype=float)
+            self.data = np.asarray(data, dtype=float).copy()
             if self.data.ndim != 2:
                 raise ValueError("Matrix data must be two-dimensional")
 

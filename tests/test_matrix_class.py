@@ -5,7 +5,6 @@ from domain.matrix import Matrix, SquareMatrix
 class TestMatrixClass:
     m2x2zero = np.array([[0, 0], [0, 0]])
     m2x3zero = np.array([[0, 0, 0], [0, 0, 0]])
-    unit = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
     simple_2x2 = np.array([[1, 2], [3, 4]])
 
     def test_no_args_constructor(self):
@@ -42,7 +41,7 @@ class TestMatrixClass:
 
         assert size == m.rows
         assert size == m.cols
-        assert np.array_equal(self.unit, m.data)
+        assert np.array_equal(np.eye(size), m.data)
 
     def test_switch_rows(self):
         m = Matrix(self.simple_2x2.copy())
