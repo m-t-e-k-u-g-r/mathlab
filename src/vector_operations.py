@@ -1,7 +1,9 @@
 import logging
 import numpy as np
 
+from domain.matrix import SquareMatrix, Matrix
 from domain.vector import Vector
+from linear_system_operations import solve
 
 logger = logging.getLogger(__name__)
 
@@ -53,3 +55,29 @@ def calculate_cross_product(v1: Vector, v2: Vector) -> Vector:
         result[d-1] = v1[index] * v2[next_index] - v1[next_index] * v2[index]
 
     return result
+
+def check_collinearity(v1: Vector, v2: Vector) -> bool:
+    if v1.dimension != v2.dimension:
+        logger.error("Vectors must have the same dimension to be collinear")
+        raise ValueError("Vectors must have the same dimension")
+
+    k_values = [v2.data[i] / v1.data[i] for i in range(v1.dimension)]
+    return all(x == k_values[0] for x in k_values)
+
+
+def check_linear_dependency(vectors: list[Vector]) -> bool:
+    if any(v.dimension != len(vectors) for v in vectors):
+        logger.error("Vectors do not have the same dimension to be linear dependent")
+        raise ValueError("Vectors must have the same dimension")
+
+    data = np.column_stack([v.data for v in vectors])
+    equations = SquareMatrix(data)
+    rhs = Matrix(rows=len(vectors), cols=1)
+
+    result = solve(equations, rhs)
+    return any(v != 0 for v in result.data)
+
+
+def check_orthogonality(v1: Vector, v2: Vector) -> bool:
+    return np.isclose(calculate_scalar_product(v1, v2), 0, rtol=1e-10, atol=1e-10)
+

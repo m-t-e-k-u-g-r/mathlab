@@ -4,7 +4,7 @@ from domain.lse_solution import LinearSystemEquationSolution, SolutionType
 from domain.matrix import Matrix, SquareMatrix
 
 
-def solve(a: SquareMatrix, b: Matrix):
+def solve(a: SquareMatrix, b: Matrix) -> Matrix:
     if a.rows != b.rows:
         raise ValueError("Number of rows does not match")
     if b.cols != 1:

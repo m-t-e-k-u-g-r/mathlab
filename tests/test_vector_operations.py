@@ -59,3 +59,38 @@ class TestVectorOperations:
 
             expected = np.cross(data1.flatten(), data2.flatten())
             assert np.allclose(expected, result.data.flatten(), rtol=1e-10, atol=1e-10)
+
+    @pytest.mark.parametrize("size", list(range(1, 101)))
+    def test_check_collinearity(self, size: int):
+        for _ in range(100):
+            v1 = Vector(data=np.array(self.rng.uniform(-100, 100, size=(size, 1))))
+            v2 = Vector(data=np.array(self.rng.uniform(-100, 100, size=(size, 1))))
+
+            result = ops.check_collinearity(v1, v2)
+
+            expected = np.linalg.matrix_rank(np.column_stack((v1.data, v2.data))) < 2
+            assert expected == result
+
+    @pytest.mark.parametrize("size", list(range(1, 51)))
+    def test_check_linear_dependency(self, size: int):
+        for _ in range(100):
+            vectors: list[Vector] = [Vector(
+                data=np.array(self.rng.uniform(-100, 100, size=(size, 1)))
+            ) for _ in range(size)]
+            data = np.column_stack([v.data.copy() for v in vectors])
+
+            result = ops.check_linear_dependency(vectors)
+
+            expected = np.linalg.matrix_rank(data) < data.shape[1]
+            assert expected == result
+
+    @pytest.mark.parametrize("size", list(range(1, 101)))
+    def test_check_orthogonality(self, size: int):
+        for _ in range(100):
+            v1 = Vector(data=np.array(self.rng.uniform(-100, 100, size=(size, 1))))
+            v2 = Vector(data=np.array(self.rng.uniform(-100, 100, size=(size, 1))))
+
+            result = ops.check_orthogonality(v1, v2)
+
+            expected = np.isclose(np.vdot(v1.data, v2.data), 0, rtol=1e-10, atol=1e-10)
+            assert expected == result
