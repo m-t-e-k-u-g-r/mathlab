@@ -36,3 +36,26 @@ class TestVectorOperations:
 
             expected = v1.data - v2.data
             assert np.allclose(expected, result, rtol=1e-10, atol=1e-10)
+
+    @pytest.mark.parametrize("size", list(range(1, 101)))
+    def test_calculate_scalar_product(self, size: int):
+        for _ in range(100):
+            v1 = Vector(data=np.array(self.rng.uniform(-100, 100, size=(size, 1))))
+            v2 = Vector(data=np.array(self.rng.uniform(-100, 100, size=(size, 1))))
+
+            result = ops.calculate_scalar_product(v1, v2)
+
+            expected: float = np.vdot(v1.data, v2.data)
+            assert np.isclose(expected, result, rtol=1e-10, atol=1e-10)
+
+    def test_calculate_cross_product(self):
+        for _ in range(1000):
+            data1 = np.array(self.rng.uniform(-100, 100, size=(3, 1)))
+            data2 = np.array(self.rng.uniform(-100, 100, size=(3, 1)))
+            v1 = Vector(data=data1)
+            v2 = Vector(data=data2)
+
+            result = ops.calculate_cross_product(v1, v2)
+
+            expected = np.cross(data1.flatten(), data2.flatten())
+            assert np.allclose(expected, result.data.flatten(), rtol=1e-10, atol=1e-10)
